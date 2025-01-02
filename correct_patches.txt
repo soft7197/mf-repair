@@ -1,0 +1,1529 @@
+Chart_14:
+
+public boolean removeDomainMarker(int index, Marker marker, Layer layer,
+        boolean notify) {
+    ArrayList<Marker> markers;
+    if (layer == Layer.FOREGROUND) {
+        markers = (ArrayList<Marker>) this.foregroundDomainMarkers.get(Integer.valueOf(index));
+    } else {
+        markers = (ArrayList<Marker>) this.backgroundDomainMarkers.get(Integer.valueOf(index));
+    }
+
+    boolean removed = false;
+    if (markers != null) {
+        removed = markers.remove(marker);
+    }
+
+    if (removed && notify) {
+        fireChangeEvent();
+    }
+    return removed;
+}
+public boolean removeRangeMarker(int index, Marker marker, Layer layer,
+        boolean notify) {
+    if (marker == null) {
+        throw new IllegalArgumentException("Null 'marker' argument.");
+    }
+
+    ArrayList markers;
+    if (layer == Layer.FOREGROUND) {
+        markers = (ArrayList) this.foregroundRangeMarkers.get(new Integer(
+                index));
+    } else {
+        markers = (ArrayList) this.backgroundRangeMarkers.get(new Integer(
+                index));
+    }
+
+    if (markers == null) {
+        return false;
+    }
+
+    boolean removed = markers.remove(marker);
+    if (removed && notify) {
+        fireChangeEvent();
+    }
+    return removed;
+}
+
+public boolean removeDomainMarker(int index, Marker marker, Layer layer,
+        boolean notify) {
+    ArrayList markers;
+    if (layer == Layer.FOREGROUND) {
+        markers = (ArrayList) this.foregroundDomainMarkers.get(new Integer(
+                index));
+    } else {
+        markers = (ArrayList) this.backgroundDomainMarkers.get(new Integer(
+                index));
+    }
+    
+    // Check if markers are null before attempting to remove
+    if (markers == null) {
+        return false;
+    }
+    
+    boolean removed = markers.remove(marker);
+    if (removed && notify) {
+        fireChangeEvent();
+    }
+    return removed;
+}
+public boolean removeRangeMarker(int index, Marker marker, Layer layer,
+                boolean notify) {
+        if (marker == null) {
+            throw new IllegalArgumentException("Null 'marker' argument.");
+        }
+        ArrayList markers;
+        if (layer == Layer.FOREGROUND) {
+            markers = (ArrayList) this.foregroundRangeMarkers.get(new Integer(index));
+        }
+        else {
+            markers = (ArrayList) this.backgroundRangeMarkers.get(new Integer(index));
+        }
+        
+        if (markers == null) {
+            return false; // No markers exist at this index, nothing to remove
+        }
+        
+        boolean removed = markers.remove(marker);
+        if (removed && notify) {
+            fireChangeEvent();
+        }
+        return removed;
+}
+
+Chart_16:
+
+public DefaultIntervalCategoryDataset(Comparable[] seriesKeys,
+                                          Comparable[] categoryKeys,
+                                          Number[][] starts,
+                                          Number[][] ends) {
+
+        this.startData = starts;
+        this.endData = ends;
+
+        if (starts != null && ends != null) {
+
+            String baseName = "org.jfree.data.resources.DataPackageResources";
+            ResourceBundle resources = ResourceBundle.getBundle(baseName);
+
+            int seriesCount = starts.length;
+            if (seriesCount != ends.length) {
+                String errMsg = "DefaultIntervalCategoryDataset: the number "
+                    + "of series in the start value dataset does "
+                    + "not match the number of series in the end "
+                    + "value dataset.";
+                throw new IllegalArgumentException(errMsg);
+            }
+
+            // set up the series names...
+            if (seriesKeys != null) {
+                if (seriesKeys.length != seriesCount) {
+                    throw new IllegalArgumentException(
+                            "The number of series keys does not "
+                            + "match the number of series in the data.");
+                }
+                this.seriesKeys = seriesKeys;
+            } else {
+                String prefix = resources.getString(
+                        "series.default-prefix") + " ";
+                this.seriesKeys = generateKeys(seriesCount, prefix);
+            }
+
+            // set up the category names...
+            int categoryCount = (seriesCount > 0) ? starts[0].length : 0;
+            if (categoryCount > 0 && categoryCount != ends[0].length) {
+                String errMsg = "DefaultIntervalCategoryDataset: the "
+                            + "number of categories in the start value "
+                            + "dataset does not match the number of "
+                            + "categories in the end value dataset.";
+                throw new IllegalArgumentException(errMsg);
+            }
+            if (categoryKeys != null) {
+                if (categoryKeys.length != categoryCount) {
+                    throw new IllegalArgumentException(
+                            "The number of category keys does not match "
+                            + "the number of categories in the data.");
+                }
+                this.categoryKeys = categoryKeys;
+            } else {
+                String prefix = resources.getString(
+                        "categories.default-prefix") + " ";
+                this.categoryKeys = generateKeys(categoryCount, prefix);
+            }
+        } else {
+            this.seriesKeys = new Comparable[0];
+            this.categoryKeys = new Comparable[0];
+        }
+    }
+public void setCategoryKeys(Comparable[] categoryKeys) {
+    if (categoryKeys == null) {
+        throw new IllegalArgumentException("Null 'categoryKeys' argument.");
+    }
+    // Check if the startData is not null and has at least one row before accessing its first element.
+    if (this.startData != null && this.startData.length > 0 && categoryKeys.length != this.startData[0].length) {
+        throw new IllegalArgumentException(
+                "The number of categories does not match the data.");
+    }
+    for (int i = 0; i < categoryKeys.length; i++) {
+        if (categoryKeys[i] == null) {
+            throw new IllegalArgumentException(
+                "DefaultIntervalCategoryDataset.setCategoryKeys(): "
+                + "null category not permitted.");
+        }
+    }
+    this.categoryKeys = categoryKeys;
+    fireDatasetChanged();
+}
+
+Chart_18:
+
+public void removeValue(int index) {
+    if (index < 0 || index >= this.keys.size()) {
+        throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.keys.size());
+    }
+    this.keys.remove(index);
+    this.values.remove(index);
+    rebuildIndex();
+}
+
+public void removeValue(Comparable key) {
+    if (key == null) {
+        throw new IllegalArgumentException("Key cannot be null.");
+    }
+    
+    int index = getIndex(key);
+    if (index < 0) {
+        throw new UnknownKeyException("Key not recognized: " + key);
+    }
+    
+    removeValue(index);
+}
+public void removeColumn(Comparable columnKey) {
+    // Check if the columnKey is null and throw an exception if it is
+    if (columnKey == null) {
+        throw new IllegalArgumentException("Column key cannot be null.");
+    }
+    
+    // Check if the columnKey exists in the columnKeys list
+    if (!this.columnKeys.contains(columnKey)) {
+        throw new UnknownKeyException("Table does not contain a column with the specified key.");
+    }
+    
+    // Iterate over each row and remove the value associated with the columnKey
+    Iterator iterator = this.rows.iterator();
+    while (iterator.hasNext()) {
+        DefaultKeyedValues rowData = (DefaultKeyedValues) iterator.next();
+        // Remove the value only if the columnKey is present in the rowData
+        if (rowData.getKeys().contains(columnKey)) {
+            rowData.removeValue(columnKey);
+        }
+    }
+    
+    // After removing the values from rows, remove the columnKey from columnKeys
+    this.columnKeys.remove(columnKey);
+}
+
+Chart_19:
+
+
+public int getDomainAxisIndex(CategoryAxis axis) {
+    if (axis == null) {
+        throw new IllegalArgumentException("Null 'axis' argument.");
+    }
+    for (int i = 0; i < this.domainAxes.size(); i++) {
+        if (axis.equals(this.domainAxes.get(i))) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+public int getRangeAxisIndex(ValueAxis axis) {
+    if (axis == null) {
+        throw new IllegalArgumentException("Null 'axis' argument.");
+    }
+    int result = this.rangeAxes.indexOf(axis);
+    if (result < 0) { // try the parent plot
+        Plot parent = getParent();
+        if (parent instanceof CategoryPlot) {
+            CategoryPlot p = (CategoryPlot) parent;
+            result = p.getRangeAxisIndex(axis);
+        }
+    }
+    return result;
+}
+
+Chart_25:
+
+protected void drawHorizontalItem(Graphics2D g2,
+                                      CategoryItemRendererState state,
+                                      Rectangle2D dataArea,
+                                      CategoryPlot plot,
+                                      CategoryAxis domainAxis,
+                                      ValueAxis rangeAxis,
+                                      StatisticalCategoryDataset dataset,
+                                      int row,
+                                      int column) {
+                                     
+        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
+        
+        // BAR Y
+        double rectY = domainAxis.getCategoryStart(column, getColumnCount(), 
+                dataArea, xAxisLocation);
+
+        int seriesCount = getRowCount();
+        int categoryCount = getColumnCount();
+        if (seriesCount > 1) {
+            double seriesGap = dataArea.getHeight() * getItemMargin()
+                               / (categoryCount * (seriesCount - 1));
+            rectY = rectY + row * (state.getBarWidth() + seriesGap);
+        }
+        else {
+            rectY = rectY + row * state.getBarWidth();
+        }
+
+        // BAR X
+        Number meanValue = dataset.getMeanValue(row, column);
+
+        if (meanValue == null) {
+            return; // Can't draw a bar without a mean value
+        }
+
+        double value = meanValue.doubleValue();
+        double base = 0.0;
+        double lclip = getLowerClip();
+        double uclip = getUpperClip();
+
+        if (uclip <= 0.0) {  // cases 1, 2, 3 and 4
+            if (value >= uclip) {
+                return; // bar is not visible
+            }
+            base = uclip;
+            if (value <= lclip) {
+                value = lclip;
+            }
+        }
+        else if (lclip <= 0.0) { // cases 5, 6, 7 and 8
+            if (value >= uclip) {
+                value = uclip;
+            }
+            else {
+                if (value <= lclip) {
+                    value = lclip;
+                }
+            }
+        }
+        else { // cases 9, 10, 11 and 12
+            if (value <= lclip) {
+                return; // bar is not visible
+            }
+            base = getLowerClip();
+            if (value >= uclip) {
+               value = uclip;
+            }
+        }
+
+        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
+        double transY1 = rangeAxis.valueToJava2D(base, dataArea, yAxisLocation);
+        double transY2 = rangeAxis.valueToJava2D(value, dataArea, 
+                yAxisLocation);
+        double rectX = Math.min(transY2, transY1);
+
+        double rectHeight = state.getBarWidth();
+        double rectWidth = Math.abs(transY2 - transY1);
+
+        Rectangle2D bar = new Rectangle2D.Double(rectX, rectY, rectWidth, 
+                rectHeight);
+        Paint seriesPaint = getItemPaint(row, column);
+        g2.setPaint(seriesPaint);
+        g2.fill(bar);
+        if (isDrawBarOutline() && state.getBarWidth() > 3) {
+            g2.setStroke(getItemStroke(row, column));
+            g2.setPaint(getItemOutlinePaint(row, column));
+            g2.draw(bar);
+        }
+
+        // standard deviation lines
+        Number stdDevValue = dataset.getStdDevValue(row, column);
+        if (stdDevValue != null) {
+            double valueDelta = stdDevValue.doubleValue();
+            double highVal = rangeAxis.valueToJava2D(meanValue.doubleValue() 
+                    + valueDelta, dataArea, yAxisLocation);
+            double lowVal = rangeAxis.valueToJava2D(meanValue.doubleValue() 
+                    - valueDelta, dataArea, yAxisLocation);
+
+            if (this.errorIndicatorStroke != null) {
+                g2.setStroke(this.errorIndicatorStroke);
+            }
+            else {
+                g2.setStroke(getItemOutlineStroke(row, column));
+            }
+            if (this.errorIndicatorPaint != null) {
+                g2.setPaint(this.errorIndicatorPaint);  
+            }
+            else {
+                g2.setPaint(getItemOutlinePaint(row, column));   
+            }
+        
+            Line2D line = null;
+            line = new Line2D.Double(lowVal, rectY + rectHeight / 2.0d, 
+                                     highVal, rectY + rectHeight / 2.0d);
+            g2.draw(line);
+            line = new Line2D.Double(highVal, rectY + rectHeight * 0.25, 
+                                     highVal, rectY + rectHeight * 0.75);
+            g2.draw(line);
+            line = new Line2D.Double(lowVal, rectY + rectHeight * 0.25, 
+                                     lowVal, rectY + rectHeight * 0.75);
+            g2.draw(line);
+        }
+        
+        CategoryItemLabelGenerator generator = getItemLabelGenerator(row, 
+                column);
+        if (generator != null && isItemLabelVisible(row, column)) {
+            drawItemLabel(g2, dataset, row, column, plot, generator, bar, 
+                    (value < 0.0));
+        }        
+
+        // add an item entity, if this information is being collected
+        EntityCollection entities = state.getEntityCollection();
+        if (entities != null) {
+            addItemEntity(entities, dataset, row, column, bar);
+        }
+
+    }
+
+protected void drawVerticalItem(Graphics2D g2,
+                                    CategoryItemRendererState state,
+                                    Rectangle2D dataArea,
+                                    CategoryPlot plot,
+                                    CategoryAxis domainAxis,
+                                    ValueAxis rangeAxis,
+                                    StatisticalCategoryDataset dataset,
+                                    int row,
+                                    int column) {
+                                     
+        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
+        
+        // BAR X
+        double rectX = domainAxis.getCategoryStart(
+            column, getColumnCount(), dataArea, xAxisLocation
+        );
+
+        int seriesCount = getRowCount();
+        int categoryCount = getColumnCount();
+        if (seriesCount > 1) {
+            double seriesGap = dataArea.getWidth() * getItemMargin()
+                               / (categoryCount * (seriesCount - 1));
+            rectX = rectX + row * (state.getBarWidth() + seriesGap);
+        }
+        else {
+            rectX = rectX + row * state.getBarWidth();
+        }
+
+        // BAR Y
+        Number meanValueObj = dataset.getMeanValue(row, column);
+        if (meanValueObj == null) {
+            return; // No mean value, nothing to draw
+        }
+        double value = meanValueObj.doubleValue();
+
+        double base = 0.0;
+        double lclip = getLowerClip();
+        double uclip = getUpperClip();
+
+        if (uclip <= 0.0) {  // cases 1, 2, 3 and 4
+            if (value >= uclip) {
+                return; // bar is not visible
+            }
+            base = uclip;
+            if (value <= lclip) {
+                value = lclip;
+            }
+        }
+        else if (lclip <= 0.0) { // cases 5, 6, 7 and 8
+            if (value >= uclip) {
+                value = uclip;
+            }
+            else {
+                if (value <= lclip) {
+                    value = lclip;
+                }
+            }
+        }
+        else { // cases 9, 10, 11 and 12
+            if (value <= lclip) {
+                return; // bar is not visible
+            }
+            base = getLowerClip();
+            if (value >= uclip) {
+               value = uclip;
+            }
+        }
+
+        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
+        double transY1 = rangeAxis.valueToJava2D(base, dataArea, yAxisLocation);
+        double transY2 = rangeAxis.valueToJava2D(value, dataArea, 
+                yAxisLocation);
+        double rectY = Math.min(transY2, transY1);
+
+        double rectWidth = state.getBarWidth();
+        double rectHeight = Math.abs(transY2 - transY1);
+
+        Rectangle2D bar = new Rectangle2D.Double(rectX, rectY, rectWidth, 
+                rectHeight);
+        Paint seriesPaint = getItemPaint(row, column);
+        g2.setPaint(seriesPaint);
+        g2.fill(bar);
+        if (isDrawBarOutline() && state.getBarWidth() > 3) {
+            g2.setStroke(getItemStroke(row, column));
+            g2.setPaint(getItemOutlinePaint(row, column));
+            g2.draw(bar);
+        }
+
+        // standard deviation lines
+        Number stdDevValueObj = dataset.getStdDevValue(row, column);
+        if (stdDevValueObj != null) {
+            double valueDelta = stdDevValueObj.doubleValue();
+            double highVal = rangeAxis.valueToJava2D(meanValueObj.doubleValue() 
+                    + valueDelta, dataArea, yAxisLocation);
+            double lowVal = rangeAxis.valueToJava2D(meanValueObj.doubleValue() 
+                    - valueDelta, dataArea, yAxisLocation);
+
+            if (this.errorIndicatorStroke != null) {
+                g2.setStroke(this.errorIndicatorStroke);
+            }
+            else {
+                g2.setStroke(getItemOutlineStroke(row, column));
+            }
+            if (this.errorIndicatorPaint != null) {
+                g2.setPaint(this.errorIndicatorPaint);  
+            }
+            else {
+                g2.setPaint(getItemOutlinePaint(row, column));   
+            }
+            Line2D line = null;
+            line = new Line2D.Double(rectX + rectWidth / 2.0d, lowVal,
+                                     rectX + rectWidth / 2.0d, highVal);
+            g2.draw(line);
+            line = new Line2D.Double(rectX + rectWidth / 2.0d - 5.0d, highVal,
+                                     rectX + rectWidth / 2.0d + 5.0d, highVal);
+            g2.draw(line);
+            line = new Line2D.Double(rectX + rectWidth / 2.0d - 5.0d, lowVal,
+                                     rectX + rectWidth / 2.0d + 5.0d, lowVal);
+            g2.draw(line);
+        }
+        
+        CategoryItemLabelGenerator generator = getItemLabelGenerator(row, 
+                column);
+        if (generator != null && isItemLabelVisible(row, column)) {
+            drawItemLabel(g2, dataset, row, column, plot, generator, bar, 
+                    (value < 0.0));
+        }        
+
+        // add an item entity, if this information is being collected
+        EntityCollection entities = state.getEntityCollection();
+        if (entities != null) {
+            addItemEntity(entities, dataset, row, column, bar);
+        }
+    }
+
+Closure_6:
+boolean expectCanAssignToPropertyOf(NodeTraversal t, Node n, JSType rightType,
+      JSType leftType, Node owner, String propName) {
+    // The NoType check is a hack to make typedefs work OK.
+    if (!leftType.isNoType() && !rightType.canAssignTo(leftType)) {
+      if ((leftType.isConstructor() || leftType.isEnumType()) && (rightType.isConstructor() || rightType.isEnumType())) {
+        // Correct the logic for mismatch registration.
+        mismatch(t, n,
+            "assignment to property " + propName + " of " +
+            getReadableJSTypeName(owner, true),
+            rightType, leftType);
+      } else {
+      // Do not type-check interface methods, because we expect that
+      // they will have dummy implementations that do not match the type
+      // annotations.
+      JSType ownerType = getJSType(owner);
+      if (ownerType.isFunctionPrototypeType()) {
+        FunctionType ownerFn = ownerType.toObjectType().getOwnerFunction();
+        if (ownerFn.isInterface() &&
+            rightType.isFunctionType() && leftType.isFunctionType()) {
+          return true;
+        }
+      }
+
+      mismatch(t, n,
+          "assignment to property " + propName + " of " +
+          getReadableJSTypeName(owner, true),
+          rightType, leftType);
+      }
+      return false;
+    }
+    return true;
+  }
+
+boolean expectCanAssignTo(NodeTraversal t, Node n, JSType rightType,
+      JSType leftType, String msg) {
+    if (!rightType.canAssignTo(leftType)) {
+      if ((leftType.isConstructor() || leftType.isEnumType()) && (rightType.isConstructor() || rightType.isEnumType())) {
+        mismatch(t, n, msg, rightType, leftType); // Corrected from registerMismatch to mismatch
+      } else {
+        mismatch(t, n, msg, rightType, leftType);
+      }
+      return false;
+    }
+    return true;
+  }
+  
+Closure_9:
+
+private String normalizeSourceName(String filename) {
+    // The DOS command shell will normalize "/" to "\", so we have to
+    // wrestle it back.
+
+    // Replace backslashes with forward slashes
+    filename = filename.replace("\\", "/");
+
+    if (filename.indexOf(filenamePrefix) == 0) {
+      filename = filename.substring(filenamePrefix.length());
+    }
+
+    return filename;
+}
+
+private void visitScript(NodeTraversal t, Node script) {
+    Preconditions.checkArgument(scriptNodeCount == 1,
+        "ProcessCommonJSModules supports only one invocation per " +
+        "CompilerInput / script node");
+
+    // Normalize the source file name to ensure consistent path handling.
+    String normalizedFileName = normalizeSourceName(script.getSourceFileName());
+
+    // Use the normalized file name to guess the module name, enhancing compatibility
+    String moduleName = guessCJSModuleName(normalizedFileName);
+
+    // Add a variable declaration to the front of the script for the module
+    script.addChildToFront(IR.var(IR.name(moduleName), IR.objectlit())
+        .copyInformationFromForTree(script));
+
+    if (reportDependencies) {
+        CompilerInput ci = t.getInput();
+        ci.addProvide(moduleName);
+        JSModule m = new JSModule(moduleName);
+        m.addAndOverrideModule(ci);
+        module = m;
+    }
+
+    // Add a 'goog.provide' call for the module
+    script.addChildToFront(IR.exprResult(
+        IR.call(IR.getprop(IR.name("goog"), IR.string("provide")),
+            IR.string(moduleName))).copyInformationFromForTree(script));
+
+    emitOptionalModuleExportsOverride(script, moduleName);
+
+    // Rename variables to avoid conflicts in the global scope.
+    NodeTraversal.traverse(compiler, script, new SuffixVarsCallback(
+        moduleName));
+
+    compiler.reportCodeChange();
+}
+
+Closure_80:
+
+static boolean isBooleanResultHelper(Node n) {
+    switch (n.getType()) {
+      // Primitives
+      case Token.TRUE:
+      case Token.FALSE:
+      // Comparisons
+      case Token.EQ:
+      case Token.NE:
+      case Token.SHEQ:
+      case Token.SHNE:
+      case Token.LT:
+      case Token.GT:
+      case Token.LE:
+      case Token.GE:
+      // Queries
+      case Token.IN:
+      case Token.INSTANCEOF:
+      // Inversion
+      case Token.NOT:
+      // Logical operators
+      case Token.AND:
+      case Token.OR:
+      case Token.HOOK:
+      // Assignment that may result in boolean
+      case Token.ASSIGN:
+      // Comma operator where the last expression may be boolean
+      case Token.COMMA:
+      // delete operator returns a boolean.
+      case Token.DELPROP:
+        return true;
+      default:
+        return false;
+    }
+  }
+static boolean evaluatesToLocalValue(Node value, Predicate<Node> locals) {
+    switch (value.getType()) {
+      case Token.ASSIGN:
+        return NodeUtil.isImmutableValue(value.getLastChild())
+            || (locals.test(value) 
+                && evaluatesToLocalValue(value.getLastChild(), locals));
+      case Token.COMMA:
+        return evaluatesToLocalValue(value.getLastChild(), locals);
+      case Token.AND:
+      case Token.OR:
+        return evaluatesToLocalValue(value.getFirstChild(), locals)
+           && evaluatesToLocalValue(value.getLastChild(), locals);
+      case Token.HOOK:
+        return evaluatesToLocalValue(value.getFirstChild().getNext(), locals)
+           && evaluatesToLocalValue(value.getLastChild(), locals);
+      case Token.INC:
+      case Token.DEC:
+        if (value.getBooleanProp(Node.INCRDECR_PROP)) {
+          return evaluatesToLocalValue(value.getFirstChild(), locals);
+        } else {
+          return true;
+        }
+      case Token.THIS:
+        return locals.test(value);
+      case Token.NAME:
+        return NodeUtil.isImmutableValue(value) || locals.test(value);
+      case Token.GETELEM:
+      case Token.GETPROP:
+        return locals.test(value);
+      case Token.CALL:
+        return NodeUtil.callHasLocalResult(value)
+            || NodeUtil.isToStringMethodCall(value)
+            || locals.test(value);
+      case Token.NEW:
+        return NodeUtil.newHasLocalResult(value)
+               || locals.test(value);
+      case Token.FUNCTION:
+      case Token.REGEXP:
+      case Token.ARRAYLIT:
+      case Token.OBJECTLIT:
+        return true;
+      case Token.IN:
+        return true;
+      case Token.DELPROP:
+        return true;
+      default:
+        if (NodeUtil.isAssignmentOp(value)
+            || NodeUtil.isSimpleOperator(value)
+            || NodeUtil.isImmutableValue(value)) {
+          return true;
+        }
+
+        throw new IllegalStateException(
+            "Unexpected expression node" + value +
+            "\n parent:" + value.getParent());
+    }
+}
+
+Lang_20:
+
+public static String join(Object[] array, char separator, int startIndex, int endIndex) {
+    if (array == null) {
+        return null;
+    }
+    int noOfItems = (endIndex - startIndex);
+    if (noOfItems <= 0) {
+        return "";
+    }
+    
+    StringBuilder buf = new StringBuilder();
+
+    for (int i = startIndex; i < endIndex; i++) {
+        if (i > startIndex) {
+            buf.append(separator);
+        }
+        if (array[i] != null) {
+            buf.append(array[i]);
+        } else {
+            buf.append(""); // Represent null objects by empty strings
+        }
+    }
+    return buf.toString();
+}
+public static String join(Object[] array, String separator, int startIndex, int endIndex) {
+    if (array == null) {
+        return null;
+    }
+    if (separator == null) {
+        separator = "";
+    }
+
+    // Adjust endIndex to not exceed the array length
+    if (endIndex > array.length) {
+        endIndex = array.length;
+    }
+
+    int noOfItems = (endIndex - startIndex);
+    if (noOfItems <= 0) {
+        return "";
+    }
+
+    StringBuilder buf = new StringBuilder();
+
+    for (int i = startIndex; i < endIndex; i++) {
+        if (i > startIndex) {
+            buf.append(separator);
+        }
+        if (array[i] != null) {
+            buf.append(array[i]);
+        } else {
+            buf.append(""); // Treat null as an empty string
+        }
+    }
+    return buf.toString();
+}
+
+Lang_34:
+
+static Map<Object, Object> getRegistry() {
+    return REGISTRY.get();
+}
+static boolean isRegistered(Object value) {  
+    // Call getRegistry and store the reference 
+    Map<Object, Object> m = getRegistry();   
+    
+    // Check if the retrieved registry is null. 
+    // If it's null, return false indicating the value isn't registered.
+    if (m == null) {
+        return false;
+    }
+
+    // If the registry is not null, check if it contains the key
+    return m.containsKey(value);                
+}
+
+Lang_35:
+
+public static <T> T[] add(T[] array, T element) {
+    // If both array and element are null, throw an exception
+    if (array == null && element == null) {
+        throw new IllegalArgumentException("Both array and element cannot be null");
+    }
+
+    // Determine the component type for the new array
+    Class<?> type;
+    if (array != null) {
+        type = array.getClass().getComponentType();
+    } else {
+        type = element.getClass();
+    }
+
+    // Create a new array with an additional slot for the new element
+    @SuppressWarnings("unchecked")
+    T[] newArray = (T[]) java.lang.reflect.Array.newInstance(type, (array != null ? array.length + 1 : 1));
+    
+    // If array is not null, copy its contents
+    if (array != null) {
+        System.arraycopy(array, 0, newArray, 0, array.length);
+    }
+
+    // Add the new element at the end
+    newArray[newArray.length - 1] = element;
+    return newArray;
+}
+
+public static <T> T[] add(T[] array, T element) {
+    if (array == null && element == null) {
+        throw new IllegalArgumentException("Both array and element cannot be null");
+    }
+
+    Class<?> type;
+    if (array != null) {
+        // Determine the component type of the array
+        type = array.getClass().getComponentType();
+    } else if (element != null) {
+        // If the array is null, use the element's type
+        type = element.getClass();
+    } else {
+        // This case should not occur due to the above check
+        type = Object.class;
+    }
+
+    // Create a new array with one additional slot
+    @SuppressWarnings("unchecked")
+    T[] newArray = (T[]) java.lang.reflect.Array.newInstance(type, (array != null ? array.length : 0) + 1);
+
+    if (array != null) {
+        System.arraycopy(array, 0, newArray, 0, array.length);
+    }
+
+    // Add the new element at the end
+    newArray[newArray.length - 1] = element;
+    return newArray;
+}
+
+Lang_47:
+
+public StrBuilder appendFixedWidthPadLeft(Object obj, int width, char padChar) {
+        if (width > 0) {
+            ensureCapacity(size + width);
+            String str = (obj == null ? getNullText() : obj.toString());
+            if (str == null) {
+                str = "";
+            }
+            int strLen = str.length();
+            if (strLen >= width) {
+                str.getChars(strLen - width, strLen, buffer, size);
+            } else {
+                int padLen = width - strLen;
+                for (int i = 0; i < padLen; i++) {
+                    buffer[size + i] = padChar;
+                }
+                str.getChars(0, strLen, buffer, size + padLen);
+            }
+            size += width;
+        }
+        return this;
+    }
+public StrBuilder appendFixedWidthPadRight(Object obj, int width, char padChar) {
+    if (width > 0) {
+        ensureCapacity(size + width);
+        String str = (obj == null ? getNullText() : obj.toString());
+        if (str == null) { // Check if getNullText() returns null
+            str = "";
+        }
+        int strLen = str.length();
+        if (strLen >= width) {
+            str.getChars(0, width, buffer, size);
+        } else {
+            int padLen = width - strLen;
+            str.getChars(0, strLen, buffer, size);
+            for (int i = 0; i < padLen; i++) {
+                buffer[size + strLen + i] = padChar;
+            }
+        }
+        size += width;
+    }
+    return this;
+}
+
+Lang_50:
+
+public static synchronized FastDateFormat getDateInstance(int style, TimeZone timeZone, Locale locale) {
+    Object key = new Integer(style);
+    if (timeZone != null) {
+        key = new Pair(key, timeZone);
+    }
+
+    if (locale != null) {
+        key = new Pair(key, locale);
+    } else {
+        locale = Locale.getDefault();
+        key = new Pair(key, locale);
+    }
+
+    FastDateFormat format = (FastDateFormat) cDateInstanceCache.get(key);
+    if (format == null) {
+        try {
+            SimpleDateFormat formatter = (SimpleDateFormat) DateFormat.getDateInstance(style, locale);
+            String pattern = formatter.toPattern();
+            format = getInstance(pattern, timeZone, locale);
+            cDateInstanceCache.put(key, format);
+        } catch (ClassCastException ex) {
+            throw new IllegalArgumentException("No date pattern for locale: " + locale);
+        }
+    }
+    return format;
+}
+
+public static synchronized FastDateFormat getDateTimeInstance(int dateStyle, int timeStyle, TimeZone timeZone,
+            Locale locale) {
+
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+
+        Object key = new Pair(new Integer(dateStyle), new Integer(timeStyle));
+        if (timeZone != null) {
+            key = new Pair(key, timeZone);
+        }
+        key = new Pair(key, locale);
+
+        FastDateFormat format = (FastDateFormat) cDateTimeInstanceCache.get(key);
+        if (format == null) {
+            try {
+                SimpleDateFormat formatter = (SimpleDateFormat) DateFormat.getDateTimeInstance(dateStyle, timeStyle,
+                        locale);
+                String pattern = formatter.toPattern();
+                format = getInstance(pattern, timeZone, locale);
+                cDateTimeInstanceCache.put(key, format);
+
+            } catch (ClassCastException ex) {
+                throw new IllegalArgumentException("No date time pattern for locale: " + locale);
+            }
+        }
+        return format;
+    }
+
+Lang_60:
+
+public boolean contains(char ch) {
+    char[] thisBuf = buffer;
+    // Iterate only up to the current size of the content, not the entire buffer length
+    for (int i = 0; i < size; i++) {
+        if (thisBuf[i] == ch) {
+            return true;
+        }
+    }
+    return false;
+}
+public int indexOf(char ch, int startIndex) {
+    startIndex = (startIndex < 0 ? 0 : startIndex);
+    // If the startIndex is greater than or equal to size, it should return -1
+    if (startIndex >= size) {
+        return -1;
+    }
+    char[] thisBuf = buffer;
+    // Iterate only up to the current size of the content
+    for (int i = startIndex; i < size; i++) {
+        if (thisBuf[i] == ch) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+Lang_62:
+
+public String unescape(String str) {
+    int firstAmp = str.indexOf('&');
+    if (firstAmp < 0) {
+        return str;
+    }
+
+    StringBuffer buf = new StringBuffer(str.length());
+    buf.append(str.substring(0, firstAmp));
+    for (int i = firstAmp; i < str.length(); ++i) {
+        char ch = str.charAt(i);
+        if (ch == '&') {
+            int semi = str.indexOf(';', i + 1);
+            if (semi == -1) {
+                buf.append(ch);
+                continue;
+            }
+            int amph = str.indexOf('&', i + 1);
+            if (amph != -1 && amph < semi) {
+                // Then the text looks like &...&...;
+                buf.append(ch);
+                continue;
+            }
+            String entityName = str.substring(i + 1, semi);
+            int entityValue = -1;
+            if (entityName.length() == 0) {
+                entityValue = -1;
+            } else if (entityName.charAt(0) == '#') {
+                if (entityName.length() > 1) {
+                    try {
+                        char charAt1 = entityName.charAt(1);
+                        if (charAt1 == 'x' || charAt1 == 'X') {
+                            entityValue = Integer.parseInt(entityName.substring(2), 16);
+                        } else {
+                            entityValue = Integer.parseInt(entityName.substring(1));
+                        }
+                        // Ensure entityValue is within valid char range
+                        if (entityValue > Character.MAX_VALUE) {
+                            entityValue = -1;
+                        }
+                    } catch (NumberFormatException ex) {
+                        entityValue = -1;
+                    }
+                }
+            } else {
+                entityValue = this.entityValue(entityName);
+            }
+
+            if (entityValue == -1) {
+                buf.append('&');
+                buf.append(entityName);
+                buf.append(';');
+            } else {
+                buf.append((char) (entityValue));
+            }
+            i = semi;
+        } else {
+            buf.append(ch);
+        }
+    }
+    return buf.toString();
+}
+public void unescape(Writer writer, String string) throws IOException {
+    int firstAmp = string.indexOf('&');
+    if (firstAmp < 0) {
+        writer.write(string);
+        return;
+    }
+
+    writer.write(string, 0, firstAmp);
+    int len = string.length();
+    for (int i = firstAmp; i < len; i++) {
+        char c = string.charAt(i);
+        if (c == '&') {
+            int nextIdx = i + 1;
+            int semiColonIdx = string.indexOf(';', nextIdx);
+            if (semiColonIdx == -1) {
+                writer.write(c);
+                continue;
+            }
+            int amphersandIdx = string.indexOf('&', i + 1);
+            if (amphersandIdx != -1 && amphersandIdx < semiColonIdx) {
+                // Then the text looks like &...&...;
+                writer.write(c);
+                continue;
+            }
+            String entityContent = string.substring(nextIdx, semiColonIdx);
+            int entityValue = -1;
+            int entityContentLen = entityContent.length();
+            if (entityContentLen > 0) {
+                if (entityContent.charAt(0) == '#') { // Escaped value content is an integer (decimal or hexadecimal)
+                    if (entityContentLen > 1) {
+                        try {
+                            char isHexChar = entityContent.charAt(1);
+                            if (isHexChar == 'X' || isHexChar == 'x') {
+                                entityValue = Integer.parseInt(entityContent.substring(2), 16);
+                            } else {
+                                entityValue = Integer.parseInt(entityContent.substring(1), 10);
+                            }
+                            // Ensure entityValue is within valid char range
+                            if (entityValue > Character.MAX_VALUE) {
+                                entityValue = -1;
+                            }
+                        } catch (NumberFormatException e) {
+                            entityValue = -1;
+                        }
+                    }
+                } else { // Escaped value content is an entity name
+                    entityValue = this.entityValue(entityContent);
+                }
+            }
+
+            if (entityValue == -1) {
+                writer.write('&');
+                writer.write(entityContent);
+                writer.write(';');
+            } else {
+                writer.write((char) entityValue);
+            }
+            i = semiColonIdx; // Move index up to the semi-colon
+        } else {
+            writer.write(c);
+        }
+    }
+}
+
+Math_4:
+
+public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+    // compute the intersection on infinite line
+    Vector3D v1D = line.intersection(subLine.line);
+
+    if (v1D == null) {
+        // If there's no intersection point on the infinite lines, return null
+        return null;
+    }
+
+    // check location of point with respect to first sub-line
+    Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));
+
+    // check location of point with respect to second sub-line
+    Location loc2 = subLine.remainingRegion.checkPoint(subLine.line.toSubSpace(v1D));
+
+    if (includeEndPoints) {
+        return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v1D : null;
+    } else {
+        return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v1D : null;
+    }
+}
+public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+    // retrieve the underlying lines
+    Line line1 = (Line) getHyperplane();
+    Line line2 = (Line) subLine.getHyperplane();
+
+    // compute the intersection on infinite line
+    Vector2D v2D = line1.intersection(line2);
+
+    // if the lines are parallel, the intersection point will be null
+    if (v2D == null) {
+        return null;
+    }
+
+    // check location of point with respect to first sub-line
+    Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
+
+    // check location of point with respect to second sub-line
+    Location loc2 = subLine.getRemainingRegion().checkPoint(line2.toSubSpace(v2D));
+
+    if (includeEndPoints) {
+        return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v2D : null;
+    } else {
+        return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v2D : null;
+    }
+}
+
+Math_22:
+
+public boolean isSupportLowerBoundInclusive() {
+    return false;
+}
+public boolean isSupportUpperBoundInclusive() {
+    return true;
+}
+
+Math_35:
+
+public ElitisticListPopulation(final List<Chromosome> chromosomes,
+                                   final int populationLimit,
+                                   final double elitismRate) {
+        super(chromosomes, populationLimit);
+        
+        if (elitismRate < 0.0 || elitismRate > 1.0) {
+            throw new OutOfRangeException(elitismRate, 0.0, 1.0);
+        }
+        
+        this.elitismRate = elitismRate;
+}
+public ElitisticListPopulation(final int populationLimit, final double elitismRate) {
+    super(populationLimit);
+    if (elitismRate < 0.0 || elitismRate > 1.0) {
+        throw new OutOfRangeException(elitismRate, 0.0, 1.0);
+    }
+    this.elitismRate = elitismRate;
+}
+
+Math_46:
+
+public Complex divide(Complex divisor)
+        throws NullArgumentException {
+    MathUtils.checkNotNull(divisor);
+    if (isNaN || divisor.isNaN) {
+        return NaN;
+    }
+
+    if (divisor.isZero) {
+        return NaN;
+    }
+
+    if (divisor.isInfinite() && !isInfinite()) {
+        return ZERO;
+    }
+
+    final double c = divisor.getReal();
+    final double d = divisor.getImaginary();
+
+    if (FastMath.abs(c) < FastMath.abs(d)) {
+        double q = c / d;
+        double denominator = c * q + d;
+        return createComplex((real * q + imaginary) / denominator,
+            (imaginary * q - real) / denominator);
+    } else {
+        double q = d / c;
+        double denominator = d * q + c;
+        return createComplex((imaginary * q + real) / denominator,
+            (imaginary - real * q) / denominator);
+    }
+}
+public Complex divide(double divisor) {
+    if (isNaN || Double.isNaN(divisor)) {
+        return NaN;
+    }
+    if (divisor == 0d) {
+        return NaN;
+    }
+    if (Double.isInfinite(divisor)) {
+        return !isInfinite() ? ZERO : NaN;
+    }
+    return createComplex(real / divisor,
+                         imaginary / divisor);
+}
+
+Math_49:
+public OpenMapRealVector ebeDivide(RealVector v) {
+    // Check that the dimension of `v` matches the current vector dimension
+    checkVectorDimensions(v.getDimension());
+
+    // Initialize `res` as a new vector from `this` with the same entries
+    OpenMapRealVector res = new OpenMapRealVector(this);
+
+    // Create an iterator for `this.entries` (not `res.entries`) to avoid modifying it during iteration
+    Iterator iter = this.entries.iterator();
+
+    // Iterate over the entries
+    while (iter.hasNext()) {
+        iter.advance();
+
+        // Set the entry in the result by dividing the value at the current key from this vector by the corresponding value in `v`
+        res.setEntry(iter.key(), iter.value() / v.getEntry(iter.key()));
+    }
+
+    // Return the result vector after iteration and computation
+    return res;
+}
+public OpenMapRealVector ebeDivide(double[] v) {
+    checkVectorDimensions(v.length);
+    OpenMapRealVector res = new OpenMapRealVector(this);
+    // Use a new iterator to iterate over `this.entries` to avoid modifying it during iteration
+    Iterator iter = this.entries.iterator();
+    while (iter.hasNext()) {
+        iter.advance();
+        // Set the divided value into `res`, using entry from `this`
+        res.setEntry(iter.key(), iter.value() / v[iter.key()]);
+    }
+    return res;
+}
+public OpenMapRealVector ebeMultiply(RealVector v) {
+    checkVectorDimensions(v.getDimension());
+    OpenMapRealVector res = new OpenMapRealVector(this);
+    // Create a new iterator for `this.entries` to avoid modifying it during iteration
+    Iterator iter = this.entries.iterator();
+    while (iter.hasNext()) {
+        iter.advance();
+        // Instead of modifying the original `res`, create a new entry in `res`
+        res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
+    }
+    return res;
+}
+public OpenMapRealVector ebeMultiply(double[] v) {
+    checkVectorDimensions(v.length);
+    OpenMapRealVector res = new OpenMapRealVector(this);
+    // Create a new iterator for `this.entries` to avoid modifying it during iteration
+    Iterator iter = this.entries.iterator();
+    while (iter.hasNext()) {
+        iter.advance();
+        // Instead of modifying the original `res`, create a new entry in `res`
+        res.setEntry(iter.key(), iter.value() * v[iter.key()]);
+    }
+    return res;
+}
+
+Math_65:
+
+public double getRMS() {
+    double criterion = 0;
+    for (int i = 0; i < rows; ++i) {
+        final double residual = residuals[i];
+        criterion += residual * residual * residualsWeights[i];
+    }
+    return Math.sqrt(criterion / rows);
+}
+
+
+public double getChiSquare() {
+        double chiSquare = 0;
+        for (int i = 0; i < rows; ++i) {
+            final double residual = residuals[i];
+            chiSquare += residual * residual * residualsWeights[i];
+        }
+        return chiSquare;
+}
+
+Math_77:
+
+public double getLInfNorm() {
+    double max = 0;
+    for (double a : data) {
+        max = Math.max(max, Math.abs(a));
+    }
+    return max;
+}
+public double getLInfNorm() {
+    double max = 0;
+    Iterator iter = entries.iterator();
+    while (iter.hasNext()) {
+        iter.advance();
+        max = Math.max(max, Math.abs(iter.value()));
+    }
+    return max;
+}
+
+Math_83:
+
+private Integer getBasicRow(final int col, boolean ignoreObjectiveRows) {
+    Integer row = null;
+    int start = ignoreObjectiveRows ? getNumObjectiveFunctions() : 0; // Consider objective rows based on the flag
+    for (int i = start; i < getHeight(); i++) {
+        if (MathUtils.equals(getEntry(i, col), 1.0, epsilon)) {
+            if (row == null) {
+                row = i;
+            } else {
+                // More than one '1.0' found in the column, not a basic column
+                return null;
+            }
+        } else if (!MathUtils.equals(getEntry(i, col), 0.0, epsilon)) {
+            // Non-zero entry found other than '1.0', not a basic column
+            return null;
+        }
+    }
+    return row;
+}
+protected RealPointValuePair getSolution() {
+    double[] coefficients = new double[getOriginalNumDecisionVariables()];
+    Integer negativeVarBasicRow = getBasicRow(getNegativeDecisionVariableOffset(), false);
+    double mostNegative = negativeVarBasicRow == null ? 0 : getEntry(negativeVarBasicRow, getRhsOffset());
+    Set<Integer> basicRows = new HashSet<>();
+
+    for (int i = 0; i < coefficients.length; i++) {
+        Integer basicRow = getBasicRow(getNumObjectiveFunctions() + i, false);
+        if (basicRow != null && basicRows.contains(basicRow)) {
+            // If multiple variables can take a given value, we choose the first and set the rest to 0
+            coefficients[i] = 0;
+        } else {
+            basicRows.add(basicRow);
+            coefficients[i] = 
+                (basicRow == null ? 0 : getEntry(basicRow, getRhsOffset())) - 
+                (restrictToNonNegative ? 0 : mostNegative);
+        }
+    }
+    return new RealPointValuePair(coefficients, f.getValue(coefficients));
+}
+
+Math_98:
+
+public BigDecimal[] operate(BigDecimal[] v) throws IllegalArgumentException {
+    if (v.length != this.getColumnDimension()) {
+        throw new IllegalArgumentException("vector has wrong length");
+    }
+    final int nRows = this.getRowDimension();
+    final int nCols = this.getColumnDimension();
+    final BigDecimal[] out = new BigDecimal[nRows]; // Corrected the size of the output array
+    for (int row = 0; row < nRows; row++) {
+        BigDecimal sum = BigDecimal.ZERO; // Corrected to use BigDecimal.ZERO
+        for (int i = 0; i < nCols; i++) {
+            sum = sum.add(data[row][i].multiply(v[i]));
+        }
+        out[row] = sum;
+    }
+    return out;
+}
+public double[] operate(double[] v) throws IllegalArgumentException {
+    final int nRows = this.getRowDimension();
+    final int nCols = this.getColumnDimension();
+    if (v.length != nCols) {
+        throw new IllegalArgumentException("vector has wrong length");
+    }
+    final double[] out = new double[nRows]; // Fix: Initialize out with nRows instead of v.length
+    for (int row = 0; row < nRows; row++) {
+        final double[] dataRow = data[row];
+        double sum = 0;
+        for (int i = 0; i < nCols; i++) {
+            sum += dataRow[i] * v[i];
+        }
+        out[row] = sum;
+    }
+    return out;
+}
+
+Mockito_11:
+
+public boolean equals(Object o) {
+    // Check for reference equality (self-comparison)
+    if (this == o) {
+        return true;
+    }
+    // Check if the object is an instance of DelegatingMethod
+    if (o instanceof DelegatingMethod) {
+        DelegatingMethod other = (DelegatingMethod) o;
+        // Compare the internal Method objects for equality
+        return method.equals(other.method);
+    }
+    // Check if the object is an instance of Method
+    if (o instanceof Method) {
+        // Directly compare with the internal Method
+        return method.equals(o);
+    }
+    // If not a DelegatingMethod or Method, return false
+    return false;
+}
+
+public int hashCode() {  
+    // Assume 'method' is a field similar to the one used in the equals method.
+    // Calculate a hash code based on the 'method' field to ensure consistency with equals.
+    return method != null ? method.hashCode() : 0;
+}
+
+
+Time_3:
+
+public void add(DurationFieldType type, int amount) {
+    if (type == null) {
+        throw new IllegalArgumentException("Field must not be null");
+    }
+    // Check if amount is zero; if so, do nothing
+    if (amount == 0) {
+        return;
+    }
+    setMillis(type.getField(getChronology()).add(getMillis(), amount));
+}
+
+public void addYears(final int years) {
+    // Check if years is zero; if so, do nothing
+    if (years == 0) {
+        return;
+    }
+    setMillis(getChronology().years().add(getMillis(), years));
+}
+
+public void addWeekyears(final int weekyears) {
+    // Check if weekyears is zero; if so, do nothing
+    if (weekyears != 0) {
+        setMillis(getChronology().weekyears().add(getMillis(), weekyears));
+    }
+}
+
+public void addMonths(final int months) {
+    // Check if months is zero; if so, do nothing
+    if (months == 0) {
+        return;
+    }
+    setMillis(getChronology().months().add(getMillis(), months));
+}
+
+public void addWeeks(final int weeks) {
+    // Check if weeks is zero; if so, do nothing
+    if (weeks == 0) {
+        return;
+    }
+    setMillis(getChronology().weeks().add(getMillis(), weeks));
+}
+
+public void addDays(final int days) {
+    // Check if days is zero; if so, do nothing
+    if (days == 0) {
+        return;
+    }
+    setMillis(getChronology().days().add(getMillis(), days));
+}
+
+public void addHours(final int hours) {
+    // Check if hours is zero; if so, do nothing
+    if (hours != 0) {
+        setMillis(getChronology().hours().add(getMillis(), hours));
+    }
+}
+
+public void addMinutes(final int minutes) {
+    // Check if minutes is zero; if so, do nothing
+    if (minutes != 0) {
+        setMillis(getChronology().minutes().add(getMillis(), minutes));
+    }
+}
+
+public void addSeconds(final int seconds) {
+    // Check if seconds is zero; if so, do nothing
+    if (seconds != 0) {
+        setMillis(getChronology().seconds().add(getMillis(), seconds));
+    }
+}
+
+public void addMillis(final int millis) {
+    // Check if millis is zero; if so, do nothing
+    if (millis != 0) {
+        setMillis(getChronology().millis().add(getMillis(), millis));
+    }
+}
